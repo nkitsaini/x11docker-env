@@ -1,0 +1,23 @@
+FROM dev-sd-base
+
+USER root
+ARG docker_group_id
+ARG USER_NAME=lab
+RUN usermod -l ${USER_NAME} -d /home/${USER_NAME} future_user && \
+	groupmod -n ${USER_NAME} future_user && \
+	echo "${USER_NAME}:think" | chpasswd &&\
+	passwd -l root && \
+	groupdel docker && groupadd -o -g $docker_group_id docker && usermod -aG docker ${USER_NAME}
+
+RUN mkdir -p /tmp/XDG_RUNTIME_DIR && chmod 777 /tmp/XDG_RUNTIME_DIR
+
+USER ${USER_NAME}
+COPY ./data /tmp/x11-data
+COPY ./dotfiles /tmp/dotfiles
+COPY ./inits/basic.py /tmp/init.py
+RUN python3 /tmp/init.py
+
+USER root
+COPY ./startups/basic.py /tmp/startup.py
+ENV USER_NAME_TO_USE_IN_DOCKER_COMMAND ${USER_NAME}
+CMD python3 /tmp/startup.py ${USER_NAME_TO_USE_IN_DOCKER_COMMAND}
