@@ -132,8 +132,11 @@ class Supervisord:
 
 
 COPY_HOME = """
+# COPY_HOME ----------------
 SECONDS=0
+
 #user=$(cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1)
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
 user=$(id -un)
 home="/home/$user"
 mkdir -p $home
@@ -153,9 +156,27 @@ else
 fi
 
 echo "Total time to execute $SECONDS"
+
+# Gnome keyring ----------------
+cd $home
+
+
+export NO_AT_BRIDGE=1; # Don't use dbus accessibility bridge
+eval $(dbus-launch --sh-syntax);
+eval $(echo -n "think" | /usr/bin/gnome-keyring-daemon --login);
+eval $(/usr/bin/gnome-keyring-daemon --replace);
+
+eval $(ssh-agent -s)
+ssh-add
+
+exec /usr/bin/i3
 """
 HOME_COPY_AND_I3_STARTUP_SCRIPT = COPY_HOME + "exec /usr/bin/i3\n"
 DATA_DIR = Path("/tmp/x11-data")
+
+# Should run as root 
+os.system("mkdir -p /run/user/1000")
+os.system("chown -R 1000:1000 /run/user/1000")
 
 if __name__ == "__main__":
 	script_path = Path("/tmp/x11d-scripts")

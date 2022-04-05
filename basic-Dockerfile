@@ -1,4 +1,5 @@
-FROM localhost/x11-base
+#FROM localhost/x11-base
+FROM ghcr.io/nkitsaini/x11base:main
 
 USER root
 ARG docker_group_id

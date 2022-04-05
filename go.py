@@ -41,7 +41,7 @@ PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined --privileged  -
 cmd = [
 	"x11docker",
 	*shlex.split(
-		f"--backend=podman --network --xorg --weston-xwayland --gpu --init=none --sudouser --pulseaudio=socket --desktop --user=RETAIN --xtest --workdir={user_dir} --cap-default --newprivileges=yes"
+		f"--backend=podman --clipboard --network --xorg --weston-xwayland --gpu --init=none --sudouser --pulseaudio=socket --desktop --user=RETAIN --xtest --workdir={user_dir} --cap-default --newprivileges=yes"
 	),
         '--',
         *PODMAN_OPTIONS,
