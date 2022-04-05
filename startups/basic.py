@@ -162,10 +162,9 @@ if __name__ == "__main__":
 	script_path.mkdir()
 	home_and_i3_script = (script_path/'i3.sh')
 	home_and_i3_script.write_text(HOME_COPY_AND_I3_STARTUP_SCRIPT)
-	
 	s  = Supervisord([
 		Service("i3", shlex.join(["bash", str(home_and_i3_script)]), dir=f"/home/{user}", exit_codes=[0, 1]),
-		Service("clip_sync", f"bash -c {DATA_DIR/'clip_sync'}"),
+		# TODO: check --clipboard option in x11docker and use that to sync clipboard                
 		Service("apt_update", f"apt-get update", user="root", type=ProcessType.init),
 	])
 	s.run()

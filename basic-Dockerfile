@@ -1,4 +1,4 @@
-FROM dev-sd-base
+FROM localhost/x11-base
 
 USER root
 ARG docker_group_id
@@ -20,4 +20,6 @@ RUN python3 /tmp/init.py
 USER root
 COPY ./startups/basic.py /tmp/startup.py
 ENV USER_NAME_TO_USE_IN_DOCKER_COMMAND ${USER_NAME}
-CMD python3 /tmp/startup.py ${USER_NAME_TO_USE_IN_DOCKER_COMMAND}
+# for some reason /tmp/startup.py get stripped somewhere in between so using volume mount for startup script. TODO: fixme
+CMD ["bash", "-c", "python3 /tmp/startups/basic.py ${USER_NAME_TO_USE_IN_DOCKER_COMMAND}"]
+#CMD ["bash", "-c", "cat /tmp/my_startup.py && python3 -m py_compile /tmp/my_startup.py && python3 /tmp/my_startup.py ${USER_NAME_TO_USE_IN_DOCKER_COMMAND}"]

@@ -1,3 +1,6 @@
 [submodule "dotfiles"]
 	path = dotfiles
 	url = git@github.com:nkitsaini/dotfiles.git
+[submodule "x11-base"]
+	path = x11-base
+	url = git@github.com:nkitsaini/x11-base.git
