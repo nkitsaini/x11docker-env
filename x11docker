@@ -10263,6 +10263,7 @@ main() {
   case "$Backend" in
     proot|chroot|docker|podman|nerdctl)
       create_backendcommand           # create 'docker run' command
+      echo "$Backendcommand"
       echo "$Backendcommand" >> "$Backendcommandfile"
       debugnote "$Backend command:
   $Backendcommand"
