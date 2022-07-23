@@ -21,6 +21,7 @@ user_dir = Path("/home") / user
 x11docker_user_dir = Path("/x11docker") / user
 CLIP_FILE = Path("/tmp/clip_sync")
 DOCKER_GROUP_ID = subprocess.check_output(["bash", "-c", "getent group docker | cut -d: -f 3"]).decode().strip()
+VIDEO_GROUP_ID = subprocess.check_output(["bash", "-c", "getent group video | cut -d: -f 3"]).decode().strip()
 PODMAN_CONTAINER_DIR = Path(f"/var/lib/container-{user}")
 PODMAN_CONTAINER_DIR.mkdir(exist_ok=True)
 assert subprocess.check_output(["bash", "-c", "id -u"]).decode().strip() == '0', "Run as root, otherwise podman will eat you alive"
@@ -29,7 +30,7 @@ assert subprocess.check_output(["bash", "-c", "id -u"]).decode().strip() == '0',
 
 def build_dockerfile():
 	assert os.system(
-		f"podman build -t {IMAGE_NAME} --file {DOCKERFILE_PATH.name} --build-arg docker_group_id={DOCKER_GROUP_ID} --build-arg USER_NAME={user} . "
+		f"podman build -t {IMAGE_NAME} --file {DOCKERFILE_PATH.name} --build-arg DOCKER_GROUP_ID={DOCKER_GROUP_ID} --build-arg USER_NAME={user} --build-arg VIDEO_GROUP_ID={VIDEO_GROUP_ID} . "
 	) == 0
 
 
@@ -41,7 +42,7 @@ volumes = [
          f"{CLIP_FILE}:{CLIP_FILE}", *sys.argv[2:]
 ]
 
-PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined  --privileged  --device /dev/fuse  --device /dev/dri --sysctl="net.ipv6.conf.all.disable_ipv6=0"  -v {" -v ".join(volumes)} --shm-size=1g')
+PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined  --privileged  --device /dev/fuse  --device /dev/dri --device /dev/video0 --sysctl="net.ipv6.conf.all.disable_ipv6=0"  -v {" -v ".join(volumes)} --shm-size=1g')
 cmd = [
 	"x11docker",
 	*shlex.split(

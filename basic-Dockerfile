@@ -1,13 +1,20 @@
 FROM ghcr.io/nkitsaini/x11base:main
 
 USER root
-ARG docker_group_id
+RUN reflector --ipv4 -p "http,https" -n 5 -f 5 -c 'india,' -a 6 --sort rate > /etc/pacman.d/mirrorlist
+ARG DOCKER_GROUP_ID=999
+ARG VIDEO_GROUP_ID=44
 ARG USER_NAME=lab
-RUN usermod -l ${USER_NAME} -d /home/${USER_NAME} future_user && \
-	groupmod -n ${USER_NAME} future_user
+
+RUN groupdel video || true
+RUN groupdel docker || true
+
+RUN usermod -l ${USER_NAME} -d /home/${USER_NAME} future_user \
+	&& groupmod -n ${USER_NAME} future_user \
+	&& groupadd -o -g $DOCKER_GROUP_ID docker && usermod -aG docker ${USER_NAME} \
+	&& groupadd -o -g $VIDEO_GROUP_ID video && usermod -aG video ${USER_NAME}
 
 RUN mkdir -p /tmp/XDG_RUNTIME_DIR && chmod 777 /tmp/XDG_RUNTIME_DIR
-RUN reflector --ipv4 -p "http,https" -n 5 -f 5 -c 'india,' -a 6 --sort rate > /etc/pacman.d/mirrorlist
 
 USER ${USER_NAME}
 COPY ./data /tmp/x11-data

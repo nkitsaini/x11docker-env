@@ -172,10 +172,12 @@ ssh-add
 exec /usr/bin/i3
 """
 HOME_COPY_AND_I3_STARTUP_SCRIPT = COPY_HOME + "exec /usr/bin/i3\n"
+
 DATA_DIR = Path("/tmp/x11-data")
 
 # Should run as root 
 os.system("mkdir -p /run/user/1000")
+os.system("chown -R 1000:1000 /run/user/1000")
 os.system("chown -R 1000:1000 /run/user/1000")
 
 if __name__ == "__main__":
@@ -183,7 +185,4 @@ if __name__ == "__main__":
 	script_path.mkdir()
 	home_and_i3_script = (script_path/'i3.sh')
 	home_and_i3_script.write_text(HOME_COPY_AND_I3_STARTUP_SCRIPT)
-	s  = Supervisord([
-		Service("i3", shlex.join(["bash", str(home_and_i3_script)]), dir=f"/home/{user}", exit_codes=[0, 1]),
-	])
-	s.run()
+	os.system(f"su {user} -c 'bash {home_and_i3_script}'")
