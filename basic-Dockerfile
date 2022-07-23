@@ -1,16 +1,13 @@
-#FROM localhost/x11-base
 FROM ghcr.io/nkitsaini/x11base:main
 
 USER root
 ARG docker_group_id
 ARG USER_NAME=lab
 RUN usermod -l ${USER_NAME} -d /home/${USER_NAME} future_user && \
-	groupmod -n ${USER_NAME} future_user && \
-	echo "${USER_NAME}:think" | chpasswd &&\
-	passwd -l root && \
-	groupdel docker && groupadd -o -g $docker_group_id docker && usermod -aG docker ${USER_NAME}
+	groupmod -n ${USER_NAME} future_user
 
 RUN mkdir -p /tmp/XDG_RUNTIME_DIR && chmod 777 /tmp/XDG_RUNTIME_DIR
+RUN reflector --ipv4 -p "http,https" -n 5 -f 5 -c 'india,' -a 6 --sort rate > /etc/pacman.d/mirrorlist
 
 USER ${USER_NAME}
 COPY ./data /tmp/x11-data
@@ -20,7 +17,5 @@ RUN python3 /tmp/init.py
 
 USER root
 COPY ./startups/basic.py /tmp/startup.py
-ENV USER_NAME_TO_USE_IN_DOCKER_COMMAND ${USER_NAME}
-# for some reason /tmp/startup.py get stripped somewhere in between so using volume mount for startup script. TODO: fixme
-CMD ["bash", "-c", "python3 /tmp/startups/basic.py ${USER_NAME_TO_USE_IN_DOCKER_COMMAND}"]
-#CMD ["bash", "-c", "cat /tmp/my_startup.py && python3 -m py_compile /tmp/my_startup.py && python3 /tmp/my_startup.py ${USER_NAME_TO_USE_IN_DOCKER_COMMAND}"]
+RUN echo "python3 /tmp/startups/basic.py ${USER_NAME}" > /tmp/start_script.sh
+CMD ["bash", "/tmp/start_script.sh"]

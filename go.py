@@ -9,7 +9,7 @@ X11DOCKER_PATH = "./x11docker"
 
 PWD = Path('.').absolute()
 user = sys.argv[1]
-IMAGE_NAME = f"localhost/x11dev-sd-{user}"
+IMAGE_NAME = f"localhost/x11dev-arch-{user}"
 DEFAULT_DOCKERFILE_PATH = Path(f"basic-Dockerfile")
 DOCKERFILE_PATH = Path(f"{user}-Dockerfile")
 
@@ -41,11 +41,11 @@ volumes = [
          f"{CLIP_FILE}:{CLIP_FILE}", *sys.argv[2:]
 ]
 
-PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined --privileged  --device /dev/fuse  --device /dev/dri --sysctl="net.ipv6.conf.all.disable_ipv6=0"  -v {" -v ".join(volumes)} --shm-size=1g')
+PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined  --privileged  --device /dev/fuse  --device /dev/dri --sysctl="net.ipv6.conf.all.disable_ipv6=0"  -v {" -v ".join(volumes)} --shm-size=1g')
 cmd = [
 	"x11docker",
 	*shlex.split(
-		f"--backend=podman --dbus --webcam  --gpu --clipboard --network --xc=no  --init=none --sudouser --pulseaudio=socket --desktop --user=RETAIN --xtest --workdir={user_dir} --cap-default --newprivileges=yes"
+		f"--backend=podman --dbus --webcam --gpu --clipboard --network --xc=no  --init=none --sudouser --pulseaudio --desktop --user=RETAIN --xtest --workdir={user_dir} --cap-default --newprivileges=yes"
 	),
         '--',
         *PODMAN_OPTIONS,
