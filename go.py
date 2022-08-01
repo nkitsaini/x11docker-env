@@ -5,7 +5,7 @@ import shlex
 from pathlib import Path
 import subprocess
 
-X11DOCKER_PATH = "./x11docker"
+X11DOCKER_PATH = "./x11docker/x11docker"
 
 PWD = Path('.').absolute()
 user = sys.argv[1]
