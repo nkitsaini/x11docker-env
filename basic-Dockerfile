@@ -1,5 +1,4 @@
 FROM ghcr.io/nkitsaini/x11base:main
-
 USER root
 RUN reflector --ipv4 -p "http,https" -n 5 -f 5 -c 'india,' -a 6 --sort rate > /etc/pacman.d/mirrorlist
 ARG DOCKER_GROUP_ID=999
@@ -16,6 +15,8 @@ RUN usermod -l ${USER_NAME} -d /home/${USER_NAME} future_user \
 
 RUN mkdir -p /tmp/XDG_RUNTIME_DIR && chmod 777 /tmp/XDG_RUNTIME_DIR
 
+# https://github.com/microsoft/WSL/issues/1303#issuecomment-257787954
+RUN setcap cap_net_raw+ep $(which ping)
 USER ${USER_NAME}
 COPY ./data /tmp/x11-data
 COPY ./dotfiles /tmp/dotfiles
