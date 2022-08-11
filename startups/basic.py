@@ -131,7 +131,7 @@ class Supervisord:
 		os.execv(supervisord_bin, ["supervisord", "-n", "-c", file_path, "-u", "root"])
 
 
-COPY_HOME = """
+HOME_COPY_AND_I3_STARTUP_SCRIPT = """
 # COPY_HOME ----------------
 SECONDS=0
 
@@ -169,9 +169,10 @@ eval $(/usr/bin/gnome-keyring-daemon --replace);
 eval $(ssh-agent -s)
 ssh-add
 
+#exec /usr/bin/i3
+#export XKB_DEFAULT_OPTIONS=caps:escape
 exec /usr/bin/i3
 """
-HOME_COPY_AND_I3_STARTUP_SCRIPT = COPY_HOME + "exec /usr/bin/i3\n"
 
 DATA_DIR = Path("/tmp/x11-data")
 
