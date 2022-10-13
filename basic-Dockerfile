@@ -1,6 +1,7 @@
 FROM ghcr.io/nkitsaini/x11base:main
 USER root
 RUN reflector --ipv4 -p "http,https" -n 5 -f 5 -c 'india,' -a 6 --sort rate > /etc/pacman.d/mirrorlist
+RUN yay -Sy
 ARG DOCKER_GROUP_ID=999
 ARG VIDEO_GROUP_ID=44
 ARG USER_NAME=lab

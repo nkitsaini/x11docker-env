@@ -42,7 +42,7 @@ volumes = [
          f"{CLIP_FILE}:{CLIP_FILE}", *sys.argv[2:]
 ]
 
-PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined  --privileged  --device /dev/fuse  --device /dev/dri --device /dev/video0 --sysctl="net.ipv6.conf.all.disable_ipv6=0"  -v {" -v ".join(volumes)} --shm-size=1g')
+PODMAN_OPTIONS = shlex.split(f'--security-opt seccomp=unconfined  --privileged --dns 1.1.1.1  --device /dev/fuse  --device /dev/dri --device /dev/video0 --sysctl="net.ipv6.conf.all.disable_ipv6=0"  -v {" -v ".join(volumes)} --shm-size=1g')
 cmd = [
 	"x11docker",
 	*shlex.split(
